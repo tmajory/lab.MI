@@ -1,0 +1,7 @@
+#TODO: Criar uma tabela/classe de planejamento com os dados da rota 
+(id, deposito, pedidos, status(aguardando, processado, executado),
+ data de criação, data de entrega)
+ #TODO Criar uma tabela/classe Rotas com a sequência/lista de entrega de cada pedido
+ #TODO Encapsular o roteirizador em uma função que dado um dicionário com os dados da matriz de distância, demandas e capacidades retorne um dicionário com as rotas para cada veículo.
+ #TODO adaptar um objeto de planejamento na entrada do roterizador, e obter as rotas do planejamento a partir do roteirizador
+ #TODO plotar as rotas de um planejamento no mapa

@@ -1,5 +1,6 @@
+#TODO Cria tabela/classe de depósito com os dados de depósito, endereço e coordenadas
 import os
-from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy import create_engine, ForeignKey, JSON
 from sqlalchemy import Column, Integer, Numeric, DateTime, String, Text, Boolean
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from datetime import datetime
@@ -20,12 +21,16 @@ class Customers(Base):
     id = Column(Integer, primary_key = True)
     name = Column(String(50), nullable=False)
     email = Column(String(200), nullable=False)#Unique e index
+    ativo = Column(Boolean, default=True, nullable=False)
     adress = Column(Text, nullable = False)
     longitude = Column(Integer, nullable=False)
     latitude = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
     orders = relationship("Orders", back_populates='customers')
 
+    @property
+    def __str__(self):
+        return f'Cliente: {self.name}, Endereço: {self.adress}, Email: {self.email}, Latitude: {self.latitude}, Longitude: {self.longitude}'
 
 class Veiculos(Base):
     __tablename__ = 'veiculos'
@@ -47,6 +52,29 @@ class Orders(Base):
     status = Column(String(20), default='pending')
     customers = relationship("Customers", back_populates="orders")
 
+class Deposito(Base):
+    __tablename__ = 'deposito'
+
+    id = Column(Integer, primary_key = True)
+    name = Column(String(50), nullable=False)
+    adress = Column(Text, nullable = False)
+    longitude = Column(Integer, nullable=False)
+    latitude = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.now())
+    ativo = Column(Boolean, default=True, nullable=False)
+
+class Planejamento(Base):
+    __tablename__ = 'planejamento'
+
+    id = Column(Integer, primary_key = True)
+    veiculo_id = Column(Integer, ForeignKey('veiculos.id'))
+    deposito_id = Column(Integer, ForeignKey('deposito.id'))
+    order_id = Column(JSON, ForeignKey('orders.id'), default=list)
+    created_at = Column(DateTime, default=datetime.now())
+    delivery_date = Column(DateTime, default=None)
+    status = Column(String(20), default='pending')
+
+
 
 def create_database():
 
@@ -59,37 +87,37 @@ def create_database():
 
 if __name__ == '__main__':
 
-    # create_database()
+    create_database()
 
-    a = Customers()
+    # a = Customers()
 
-    a.name = 'Joana Darc'
-    a.adress = "Rua dos bobos, 0"
-    a.email = "joanaDarc@yahoo.com"
-    a.latitude = 49000
-    a.longitude = 34562
+    # a.name = 'Joana Darc'
+    # a.adress = "Rua dos bobos, 0"
+    # a.email = "joanaDarc@yahoo.com"
+    # a.latitude = 49000
+    # a.longitude = 34562
 
-    o = Orders()
-    o.customer_id = a
-    o.peso = 50
+    # o = Orders()
+    # o.customer_id = a
+    # o.peso = 50
 
-    session.add(a)
-    session.commit()
-    session.close()
+    # session.add(a)
+    # session.commit()
+    # session.close()
 
-    costumers = session.query(Customers).all()
-    orders = session.query(Orders).all()
+    # costumers = session.query(Customers).all()
+    # orders = session.query(Orders).all()
 
-    for costumer in costumers:
+    # for costumer in costumers:
 
-        print(costumer.id, costumer.name, costumer.adress, costumer.latitude, costumer.longitude)
-    session.close()
+    #     print(costumer.id, costumer.name, costumer.adress, costumer.latitude, costumer.longitude)
+    # session.close()
 
 
-    for order in orders:
+    # for order in orders:
 
-        print(order.id, order.customer_id, order.peso)
-    session.close()
+    #     print(order.id, order.customer_id, order.peso)
+    # session.close()
 
 """
     Implementar um verificador de existência de clientes, de forma, que retorne 
